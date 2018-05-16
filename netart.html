@@ -4,9 +4,30 @@
 
 <head>
   <meta charset="utf-8">
-  <title>(Carlos Escobar) | statement</title>
+  <title>(Carlos Escobar) | Net Art </title>
   <link rel="stylesheet" type="text/css" href="main.css">
 </head>
 
 <body>
+  <script>
+    var kitty;
+var kittyImg;
+function preload() {
+  kittyImg = loadImage('kitty_transparent.png');
+}
+function setup() {
+  createCanvas(400, 400);
+  kitty = createSprite(width/2, height/2);
+  kitty.addImage(kittyImg);
+}
+function draw() {
+  background(255);
+  kitty.position.x = mouseX;
+  kitty.position.y = mouseY;
+  if (mouseIsPressed) {
+    kitty.rotation += 2;
+  }
+  drawSprites();
+}
+  </script>
   </html>
