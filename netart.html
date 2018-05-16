@@ -1,71 +1,66 @@
 
-//Sprite creation
-//Click to create a new sprite with random speed
+//pong clone
+//mouse to control both paddles
+
+var paddleA, paddleB, ball, wallTop, wallBottom;
+var MAX_SPEED = 10;
 
 function setup() {
   createCanvas(800,400);
+  //frameRate(6);
+  
+  paddleA = createSprite(30, height/2, 10, 100);
+  paddleA.immovable = true;
+  
+  paddleB = createSprite(width-28, height/2, 10, 100);
+  paddleB.immovable = true;
+  
+  wallTop = createSprite(width/2, -30/2, width, 30);
+  wallTop.immovable = true;
+  
+  wallBottom = createSprite(width/2, height+30/2, width, 30);
+  wallBottom.immovable = true;
+  
+  ball = createSprite(width/2, height/2, 10, 10);
+  ball.maxSpeed = MAX_SPEED;
+  
+  paddleA.shapeColor = paddleB.shapeColor =ball.shapeColor = color(255,255,255);
+  
+  ball.setSpeed(MAX_SPEED, -180);
 }
 
 function draw() {
-  background(255,255,255);  
+  background(0);
   
-  fill(0);
-  textAlign(CENTER);
-  text("Click to create a new sprite", width/2, height/2);
-  //draw all the sprites added to the sketch so far
-  //the positions will be updated automatically at every cycle
+  paddleA.position.y = constrain(mouseY, paddleA.height/2, height-paddleA.height/2);
+  paddleB.position.y = constrain(mouseY, paddleA.height/2, height-paddleA.height/2);
+  
+  ball.bounce(wallTop);
+  ball.bounce(wallBottom);
+  
+  if(ball.bounce(paddleA)) {
+    var swing = (ball.position.y-paddleA.position.y)/3;
+    ball.setSpeed(MAX_SPEED, ball.getDirection()+swing);
+  }
+  
+  if(ball.bounce(paddleB)) {
+    var swing = (ball.position.y-paddleB.position.y)/3;
+    ball.setSpeed(MAX_SPEED, ball.getDirection()-swing);
+  }
+  
+  if(ball.position.x<0) {
+  ball.position.x = width/2;
+  ball.position.y = height/2;
+  ball.setSpeed(MAX_SPEED, 0);
+  }
+  
+  if(ball.position.x>width) {
+  ball.position.x = width/2;
+  ball.position.y = height/2;
+  ball.setSpeed(MAX_SPEED, 180);
+  }
+  
   drawSprites();
-}
-
-function mousePressed() {
-  
-  //create a sprite at the mouse position and store it in a temporary variable
-  var s = createSprite(mouseX, mouseY, 30, 30);
-  //if no image or animation is associated it will be a rectancle of the specified size
-  //and a random color
-  
-  //now you can use the variable to set properties
-  //e.g. a random velocity on the x and y coordinates
-  s.velocity.x = random(-5, 5);
-  s.velocity.y = random(-5, 5);
-}
-
-//Moving sprites
-var ghost, circle;
-var direction = 90; //circle initial direction moving down
-
-function setup() {
-  createCanvas(800,400);
-  
-  //create the sprites
-  ghost = createSprite(600, 200, 50, 100);
-  ghost.addAnimation("floating", "assets/ghost_standing0001.png", "assets/ghost_standing0007.png");
-  
-  circle = createSprite(400, 200, 50, 100);
-  circle.addAnimation("floating", "assets/asterisk_circle0006.png", "assets/asterisk_circle0008.png");
   
 }
 
-function draw() {
-  background(255,255,255);  
-  
-  //aside of setting the velocity directly you can move a sprite
-  //by providing a speed and an angle
-  direction += 2;
-  //speed, angle
-  circle.setSpeed(3, direction);
-  
-  //you can rotate the sprite according the directio it is moving
-  //uncomment this
-  //circle.rotateToDirection = true;
-  
-  //or by applying a force toward a point
-  //force (acceleration), pointx, pointy
-  ghost.attractionPoint(.2, mouseX, mouseY);
-  //since the force keeps incrementing the speed you can 
-  //set a limit to it with maxSpeed
-  ghost.maxSpeed = 5;
-  
-  //draw the sprite
-  drawSprites();
-}
